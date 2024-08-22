@@ -9,7 +9,7 @@ const swaggerDefinition = {
     },
     servers: [
         {
-            url: 'https://backend-exe-2.vercel.app',
+            url: 'https://backend-exe-2.vercel.app/',
         },
     ],
 };
