@@ -5,7 +5,7 @@ const Media = require('../models/Media');
 
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, oldPrice, image_id, category, quantity, code } = req.body;
+        const { name, description, price, oldPrice, image_id, category, quantity, code, supportPercentage  } = req.body;
 
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
@@ -20,13 +20,11 @@ const addProduct = async (req, res) => {
             image_id,
             category,
             quantity,
-            code
+            code,
+            supportPercentage
         });
         const savedProduct = await newProduct.save();
 
-        savedProduct.id = savedProduct._id;
-        savedProduct._doc.id = savedProduct._id;
-        delete savedProduct._doc._id;
         delete savedProduct._doc.image_id;
 
         const dataSend = {
@@ -37,7 +35,6 @@ const addProduct = async (req, res) => {
             }
         };
 
-        console.log('savedProduct', savedProduct);
         res.status(201).json({ message: 'Product added successfully', data: dataSend });
     } catch (error) {
         if (error.code === 'ValidationError') {
@@ -69,7 +66,25 @@ const updateProduct = async (req, res) => {
 // Lấy sản phẩm theo query
 const getProductByQuery = async (req, res) => {
     try {
-        const query = req.query;
+        const { category, minPrice, maxPrice } = req.query;
+        const query = {};
+
+        // If category is provided in the query, add it to the search filter
+        if (category) {
+            query.category = category;
+        }
+
+        // If price range is provided in the query, add it to the search filter
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) {
+                query.price.$gte = Number(minPrice); // Greater than or equal to minPrice
+            }
+            if (maxPrice) {
+                query.price.$lte = Number(maxPrice); // Less than or equal to maxPrice
+            }
+        }
+
         const products = await ProductItem.find(query);
 
         if (products.length === 0) {
