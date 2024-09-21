@@ -51,6 +51,13 @@ const productItemSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    supportPercentage: {
+        type: Number,
+        default: 5, // Default value set to 5%
+        min: 5,
+        max: 10,
+        required: [true, 'Support percentage is required'],
+    },
 }, {
     timestamps: true,
 });

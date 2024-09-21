@@ -20,10 +20,6 @@ const addPet = async (req, res) => {
 
         const savedPet = await newPet.save();
 
-        savedPet.id = savedPet._id;
-        savedPet._doc.id = savedPet._id;
-        delete savedPet._doc._id;
-
         res.status(201).json({ message: 'Pet added successfully', data: savedPet });
     } catch (error) {
         res.status(500).json({ message: 'Failed to add pet', error });
@@ -35,7 +31,7 @@ const updatePet = async (req, res) => {
     try {
         const { id, ...updates } = req.body;
 
-        const updatedPet = await Pet.findByIdAndUpdate(id, updates, { new: true });
+        const updatedPet = await Pet.findByIdAndUpdate( {_id: id}, updates, { new: true });
         if (!updatedPet) {
             return res.status(404).json({ message: 'Pet not found' });
         }
@@ -50,7 +46,7 @@ const deletePet = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const result = await Pet.findByIdAndUpdate(id, { deleted: true }, { new: true });
+        const result = await Pet.findByIdAndUpdate({_id: id}, { deleted: true }, { new: true });
         if (!result) {
             return res.status(404).json({ message: 'Pet not found' });
         }
@@ -65,7 +61,7 @@ const getPetDetail = async (req, res) => {
     try {
         const { id } = req.body
 
-        const pet = await Pet.findById(id);
+        const pet = await Pet.findById({_id:id});
         if (!pet) {
             return res.status(404).json({ message: 'Pet not found' });
         }
@@ -81,9 +77,7 @@ const getAllPets = async (req, res) => {
         const pets = await Pet.find({ deleted: { $ne: true } });
         const petDetails = await Promise.all(pets.map(async (pet) => {
             const petObj = pet.toObject();
-            petObj.id = petObj._id;
-            delete petObj._id;
-
+            
             const media = await Media.findOne({ id: petObj.image_id });
             if (media) {
                 petObj.image = {
@@ -112,7 +106,13 @@ const getAllPets = async (req, res) => {
 // Get pets by query
 const getPetsByQuery = async (req, res) => {
     try {
-        const query = req.query;
+        const { species, coatColor, sex } = req.query;
+        
+        const query = {};
+        if (species) query.species = species;
+        if (coatColor) query.coatColor = coatColor;
+        if (sex) query.sex = sex;
+
         const pets = await Pet.find({ ...query, deleted: { $ne: true } }); // Exclude deleted pets
         res.status(200).json({ data: pets });
     } catch (error) {
