@@ -15,7 +15,6 @@ const PetRoute = require('./routes/petRouter');
 const NewsRoute = require('./routes/newsRouter');
 const AuthRoute = require('./routes/authRouter');
 const UserRoute = require('./routes/userRouter');
-const AdoptionRequestRoute = require('./routes/adoptionRequestRouter');
 
 dotenv.config();
 
@@ -48,7 +47,6 @@ app.use('/api/pets', PetRoute);
 app.use('/api/news', NewsRoute);
 app.use('/api/auth', AuthRoute);
 app.use('/api/users', UserRoute);
-app.use('/api/request', AdoptionRequestRoute);
 
 // Connect to MongoDB
 connect();

@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
             return this.role === 'admin' ? true : undefined;
         }
     },
-    address: { type: String },
 }, { timestamps: true });
 
 // Hash the password before saving the user

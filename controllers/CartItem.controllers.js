@@ -14,8 +14,7 @@ const addCartItem = async (req, res) => {
         const newCartItem = new CartItem({
             userId,
             productId,
-            quantity,
-            category: product.category
+            quantity
         });
         const savedCartItem = await newCartItem.save();
         res.status(201).json({ message: 'Item added to cart successfully', data: savedCartItem });
@@ -54,19 +53,9 @@ const deleteCartItem = async (req, res) => {
 
 const getAllCartItems = async (req, res) => {
     try {
-        const { userId, category } = req.query;
-        const query = { userId };
+        const { userId } = req.query;
 
-        if (category) {
-            query.category = category;
-        }
-
-        const cartItems = await CartItem.find(query).populate('productId');
-
-        if (cartItems.length === 0) {
-            return res.status(404).json({ message: 'No cart items found' });
-        }
-
+        const cartItems = await CartItem.find({ userId }).populate('productId');
         res.status(200).json({ data: cartItems });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get cart items', error });
@@ -77,7 +66,7 @@ const getCartItemDetail = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const cartItem = await CartItem.findById({_id: id}).populate('productId');
+        const cartItem = await CartItem.findById(id).populate('productId');
         if (!cartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
