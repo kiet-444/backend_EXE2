@@ -213,7 +213,7 @@ router.put('/update/:id', ProductController.updateProduct);
  *       500:
  *         description: Failed to get products
  */
-router.get(ProductController.getProductByQuery);
+router.get('/',ProductController.getProductByQuery);
 
 /**
  * @swagger
