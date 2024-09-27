@@ -4,8 +4,24 @@ const jwt = require('jsonwebtoken');
 // Register a new user
 const register = async (req, res) => {
     try {
-        const { username, email, password, address } = req.body;
-        const user = new User({ username, email, password, address });
+        const { username, email, password, address, phoneNumber } = req.body;
+
+        if (!username || !email || !password || !address || !phoneNumber) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Check phoneNumber format
+        if (!/^\d{9}$/.test(phoneNumber)) {
+            return res.status(400).json({ message: 'Invalid phone number format' });
+        }
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(409).json({ message: 'User already exists' });
+        }
+
+        const user = new User({ username, email, password, address, phoneNumber });
         await user.save();
         res.status(201).json({ message: 'User registered successfully', error_code: 0 });
     } catch (error) {

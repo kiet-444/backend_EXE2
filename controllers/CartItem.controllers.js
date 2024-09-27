@@ -3,20 +3,30 @@ const Product = require('../models/ProductItem');
 
 const addCartItem = async (req, res) => {
     try {
-        const { userId, productId, quantity } = req.body;
+        const { productId, quantity } = req.body;
 
-        // Check if the product exists
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
+        
+        if(product.quantity < quantity) {
+            return res.status(400).json({ message: 'Quantity exceeds available quantity' });
+        }
 
-        const newCartItem = new CartItem({
-            userId,
-            productId,
-            quantity,
-            category: product.category
-        });
+        
+
+        let newCartItem =  await CartItem.findOne({ userId: req.userId, productId });
+        if (newCartItem) {
+            newCartItem.quantity += quantity;
+        } else {
+            newCartItem = new CartItem({
+                userId: req.userId,
+                productId,
+                quantity,
+                category: product.category
+            });
+        }
         const savedCartItem = await newCartItem.save();
         res.status(201).json({ message: 'Item added to cart successfully', data: savedCartItem });
     } catch (error) {
@@ -28,7 +38,7 @@ const updateCartItem = async (req, res) => {
     try {
         const { id, quantity } = req.body;
 
-        const updatedCartItem = await CartItem.findByIdAndUpdate(id, { quantity }, { new: true });
+        const updatedCartItem = await CartItem.findByIdAndUpdate({ _id: id }, { quantity }, { new: true });
         if (!updatedCartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
@@ -40,9 +50,9 @@ const updateCartItem = async (req, res) => {
 
 const deleteCartItem = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
 
-        const deletedCartItem = await CartItem.findByIdAndDelete(id);
+        const deletedCartItem = await CartItem.findByIdAndDelete({ _id: id });
         if (!deletedCartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
@@ -54,20 +64,35 @@ const deleteCartItem = async (req, res) => {
 
 const getAllCartItems = async (req, res) => {
     try {
-        const { userId, category } = req.query;
-        const query = { userId };
+        const { category } = req.query;
+        const query = { userId: req.userId };
 
         if (category) {
             query.category = category;
         }
 
-        const cartItems = await CartItem.find(query).populate('productId');
+        const cartItems = await CartItem.find(query).populate('productId').sort({ createdAt: -1 });
 
         if (cartItems.length === 0) {
             return res.status(404).json({ message: 'No cart items found' });
         }
 
-        res.status(200).json({ data: cartItems });
+        let totalCartValue = 0;
+
+        const cartItemsWithSubtotal = cartItems.map(item => {
+            const subtotal = item.quantity * item.productId.price;
+            totalCartValue += subtotal; 
+            return {
+                ...item._doc,  
+                subtotal     
+            };
+        });
+
+        res.status(200).json({
+            data: {...cartItemsWithSubtotal._doc,
+            totalCartValue }
+            , message: 'Cart items retrieved successfully'
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get cart items', error });
     }
@@ -81,7 +106,12 @@ const getCartItemDetail = async (req, res) => {
         if (!cartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
-        res.status(200).json({ data: cartItem });
+
+        const subtotal = cartItem.quantity * cartItem.productId.price;
+        res.status(200).json({ data: {
+            ...cartItem._doc,
+            subtotal
+        }, message: 'Cart item retrieved successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get cart item details', error });
     }

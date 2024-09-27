@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const CartController = require('../controllers/CartItem.controllers');
+const { verifyToken } = require('../middleWare/auth.middleware');
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ const CartController = require('../controllers/CartItem.controllers');
  *       500:
  *         description: Failed to add item to cart
  */
-router.post('/add', CartController.addCartItem);
+router.post('/add', verifyToken, CartController.addCartItem);
 
 /**
  * @swagger
@@ -119,7 +120,7 @@ router.post('/add', CartController.addCartItem);
  *       500:
  *         description: Failed to update cart item
  */
-router.put('/update', CartController.updateCartItem);
+router.put('/update', verifyToken, CartController.updateCartItem);
 
 /**
  * @swagger
@@ -147,7 +148,7 @@ router.put('/update', CartController.updateCartItem);
  *       500:
  *         description: Failed to remove cart item
  */
-router.delete('/delete', CartController.deleteCartItem);
+router.delete('/delete/:id', verifyToken, CartController.deleteCartItem);
 
 /**
  * @swagger
@@ -177,7 +178,7 @@ router.delete('/delete', CartController.deleteCartItem);
  *       500:
  *         description: Failed to get cart items
  */
-router.get('/', CartController.getAllCartItems);
+router.get('/', verifyToken, CartController.getAllCartItems);
 
 /**
  * @swagger
@@ -207,6 +208,6 @@ router.get('/', CartController.getAllCartItems);
  *       500:
  *         description: Failed to get cart item details
  */
-router.get('/:id', CartController.getCartItemDetail);
+router.get('/:id', verifyToken, CartController.getCartItemDetail);
 
 module.exports = router;

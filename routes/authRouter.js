@@ -71,15 +71,18 @@ const AuthController = require('../controllers/Auth.controllers');
  *               password:
  *                 type: string
  *                 description: The password of the user
- *               role:
+ *               address:
  *                 type: string
- *                 enum: [user, admin]
- *                 description: The role of the user (default is 'user')
+ *                 description: The address of the user
+ *               phoneNumber:
+ *                 type: string
+ *                 description: The phone number of the user
  *             example:
  *               username: johndoe
- *               email: johndoe@example.com
+ *               email: johndoe@gmail.com
  *               password: strongpassword123
- *               role: user
+ *               address: 123 Main St
+ *               phoneNumber: 123456789
  *     responses:
  *       201:
  *         description: User registered successfully

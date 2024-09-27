@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ProductController = require('../controllers/ProductItem.controller');
+const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
 
 /**
  * @swagger
@@ -147,7 +148,7 @@ const ProductController = require('../controllers/ProductItem.controller');
  *                   type: object
  *                   description: Detailed error information
  */
-router.post('/add', ProductController.addProduct);
+router.post('/add', verifyToken, ProductController.addProduct);
 
 /**
  * @swagger

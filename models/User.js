@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
         }
     },
     address: { type: String },
+    phoneNumber: { type: Number, unique: true },
 }, { timestamps: true });
 
 // Hash the password before saving the user

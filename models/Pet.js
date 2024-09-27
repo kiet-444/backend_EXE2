@@ -16,7 +16,8 @@ const petSchema = new mongoose.Schema({
         required: true,
         enum: ['Healthy', 'Sick', 'Injured', 'Recovering'] // Tình trạng sức khỏe
     },
-    image_id: { type: String, required: true }
+    image_id: { type: String, required: true },
+    quantity: { type: Number, required: true, default: 1 },
 }, { timestamps: true });
 
 const Pet = mongoose.model('Pet', petSchema);
