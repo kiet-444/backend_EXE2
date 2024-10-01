@@ -11,7 +11,7 @@ const register = async (req, res) => {
         }
 
         // Check phoneNumber format
-        if (!/^\d{9}$/.test(phoneNumber)) {
+        if (!/^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
             return res.status(400).json({ message: 'Invalid phone number format' });
         }
 
