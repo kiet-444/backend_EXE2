@@ -32,13 +32,18 @@ const register = async (req, res) => {
 // Login a user and return a JWT token
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const { identifier, password } = req.body; 
+        // Check if the identifier is an email or username
+        const isEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(identifier);
+        const user = isEmail
+            ? await User.findOne({ email: identifier })
+            : await User.findOne({ username: identifier });
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
+
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ message: 'Failed to login', error });
