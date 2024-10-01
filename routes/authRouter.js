@@ -133,22 +133,17 @@ const AuthController = require('../controllers/Auth.controllers');
  *           schema:
  *             type: object
  *             required:
- *               - username
- *               - email
+ *               - identifier
  *               - password
  *             properties:
- *               username:
+ *               identifier:
  *                 type: string
- *                 description: The username of the user
- *               email:
- *                 type: string
- *                 format: email
- *                 description: The email of the user
+ *                 description: The username or email of the user
  *               password:
  *                 type: string
  *                 description: The password of the user
  *             example:
- *               email: johndoe@example.com
+ *               identifier: johndoe@example.com
  *               password: strongpassword123
  *     responses:
  *       200:
@@ -164,7 +159,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *                 data:
  *                   $ref: '#/components/schemas/User'
  *       400:
- *         description: Invalid email or password
+ *         description: Invalid username/email or password
  *         content:
  *           application/json:
  *             schema:
@@ -184,6 +179,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *                   type: string
  *                   description: Error message
  */
+
 
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
