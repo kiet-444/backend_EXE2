@@ -5,13 +5,15 @@ const Media = require('../models/Media');
 
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, oldPrice, image_id, category, quantity, code, supportPercentage  } = req.body;
+        const { name, description, price, oldPrice, image_id, category, quantity, code, supportPercentage, keywords } = req.body;
 
+        // Kiểm tra hình ảnh tồn tại
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
-        };
+        }
 
+        // Tạo sản phẩm mới
         const newProduct = new ProductItem({
             name,
             description,
@@ -21,26 +23,15 @@ const addProduct = async (req, res) => {
             category,
             quantity,
             code,
-            supportPercentage
+            supportPercentage,
+            keywords,
         });
+
+        // Lưu sản phẩm
         const savedProduct = await newProduct.save();
 
-        delete savedProduct._doc.image_id;
-
-        const dataSend = {
-            ...savedProduct._doc,
-            image: {
-                id: mediaExits.id,
-                url: mediaExits.url
-            }
-        };
-
-        res.status(201).json({ message: 'Product added successfully', data: dataSend });
+        res.status(201).json({ message: 'Product added successfully', data: savedProduct });
     } catch (error) {
-        if (error.code === 'ValidationError') {
-            const errors = Object.values(error.errors).map(err => err.message);
-            return res.status(400).json({ message: 'Validation failed', errors });
-        }
         res.status(500).json({ message: 'Failed to add product', error });
     }
 };
@@ -63,46 +54,95 @@ const updateProduct = async (req, res) => {
     }
 };
 
+
 // Lấy sản phẩm theo query
 const getProductByQuery = async (req, res) => {
     try {
-        const { category, minPrice, maxPrice } = req.query;
-        const query = {};
+        const { search, category, minPrice, maxPrice, page = 1, limit = 10, sort, inStock } = req.query;
+        const query = { deleted: false };
+        const skip = (page - 1) * limit;
 
-        // If category is provided in the query, add it to the search filter
+        // Nếu có từ khóa tìm kiếm
+        if (search) {
+            query.$text = { $search: search };
+        }
+
+        // Nếu có lọc theo category
         if (category) {
             query.category = category;
         }
 
-        // If price range is provided in the query, add it to the search filter
+        // Lọc theo khoảng giá
         if (minPrice || maxPrice) {
             query.price = {};
-            if (minPrice) {
-                query.price.$gte = Number(minPrice); // Greater than or equal to minPrice
-            }
-            if (maxPrice) {
-                query.price.$lte = Number(maxPrice); // Less than or equal to maxPrice
-            }
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
         }
 
-        const products = await ProductItem.find(query);
-
-        if (products.length === 0) {
-            return res.status(404).json({ message: 'No products found' });
+        // Lọc theo trạng thái còn hàng
+        if (inStock) {
+            query.quantity = { $gt: 0 }; // Chỉ lấy sản phẩm còn hàng
         }
 
-        res.status(200).json({ products });
+        // Tùy chọn sắp xếp
+        const sortOptions = {};
+        if (sort) {
+            const [sortField, sortOrder] = sort.split(':');
+            sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1; // Sắp xếp giảm hoặc tăng
+        }
+
+        // Tìm kiếm sản phẩm
+        const products = await ProductItem.find(query)
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(Number(limit));
+
+        // Đếm tổng số sản phẩm
+        const totalProducts = await ProductItem.countDocuments(query);
+
+        res.status(200).json({
+            data: products,
+            currentPage: Number(page),
+            totalPages: Math.ceil(totalProducts / limit),
+            totalProducts,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get products', error });
     }
 };
+
+
 
 // Lấy tất cả sản phẩm
 
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await ProductItem.find({ deleted: false });
+        const { page = 1, limit = 15, sort, inStock } = req.query;
+
+        const skip = (page - 1) * limit;
+
+        const query = { deleted: false };
+        
+        // Lọc theo trạng thái còn hàng
+        if (inStock) {
+            query.quantity = { $gt: 0 }; // Chỉ lấy sản phẩm còn hàng
+        }
+
+        // Tùy chọn sắp xếp
+        const sortOptions = {};
+        if (sort) {
+            const [sortField, sortOrder] = sort.split(':');
+            sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1; // Sắp xếp giảm hoặc tăng
+        }
+
+        const products = await ProductItem.find(query)
+            .sort(sortOptions)
+            .skip(skip) 
+            .limit(Number(limit)); 
+
+        const totalProducts = await ProductItem.countDocuments(query);
+
         const productDetails = await Promise.all(products.map(async (product) => {
             const productObj = product.toObject();
             productObj.id = productObj._id;
@@ -124,11 +164,19 @@ const getAllProducts = async (req, res) => {
             delete productObj.image_id;
             return productObj;
         }));
-        res.status(200).json({ data: productDetails });
+
+        res.status(200).json({
+            data: productDetails,
+            currentPage: Number(page),
+            totalPages: Math.ceil(totalProducts / limit),
+            totalProducts
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get products', error });
     }
 };
+
+
 
 const getProductDetail = async (req, res) => {
     try {

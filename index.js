@@ -17,6 +17,7 @@ const AuthRoute = require('./routes/authRouter');
 const UserRoute = require('./routes/userRouter');
 const AdoptionRequestRoute = require('./routes/adoptionRequestRouter');
 const CartPetRoute = require('./routes/cartPetRouter');
+const ReviewRoute = require('./routes/reviewRouter');
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api/auth', AuthRoute);
 app.use('/api/users', UserRoute);
 app.use('/api/request', AdoptionRequestRoute);
 app.use('/api/cart-pets', CartPetRoute);
+app.use('/api', ReviewRoute);
 
 // Connect to MongoDB
 connect();

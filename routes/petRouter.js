@@ -93,7 +93,7 @@ router.post('/add', PetController.addPet);
  *       500:
  *         description: Failed to update pet
  */
-router.put('/update', PetController.updatePet);
+router.put('/update/:id', PetController.updatePet);
 
 /**
  * @swagger
@@ -127,7 +127,7 @@ router.put('/update', PetController.updatePet);
  *       500:
  *         description: Failed to delete pet
  */
-router.delete('/delete', PetController.deletePet);
+router.delete('/delete/:id', PetController.deletePet);
 
 /**
  * @swagger

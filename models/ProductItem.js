@@ -58,9 +58,25 @@ const productItemSchema = new mongoose.Schema({
         max: 10,
         required: [true, 'Support percentage is required'],
     },
+
+    keywords: [{ type: String }],
+
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Review',
+    }],
+    averageRating: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 5,
+    },
 }, {
     timestamps: true,
 });
+
+productItemSchema.index({ name: 'text', description: 'text', keywords: 'text' });
+
 
 const ProductItem = mongoose.model('ProductItem', productItemSchema);
 

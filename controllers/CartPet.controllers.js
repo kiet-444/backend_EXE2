@@ -28,7 +28,7 @@ const addPetToCart = async (req, res) => {
         const savedCartPet = await cartPet.save();
         res.status(201).json({ message: 'Pet added to cart successfully', data: savedCartPet });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to add pet to cart', error });
+        res.status(500).json({ message: 'Failed to add pet', error });
     }
 };
 
@@ -37,7 +37,7 @@ const getCartPets = async (req, res) => {
         const cartPets = await CartPet.find({ userId: req.userId }).sort({ addedAt: -1 });
         res.status(200).json({ message: 'Cart pets retrieved successfully', data: cartPets });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to get cart pets', error });
+        res.status(500).json({ message: 'Failed to get pets', error });
     }
 };
 

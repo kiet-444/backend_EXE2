@@ -4,19 +4,22 @@ const Media = require('../models/Media');
 // Add a new pet
 const addPet = async (req, res) => {
     try {
-        const { name, sex, breed, vaccinated, healthStatus, image_id, quantity } = req.body;
+        const { name, description, age, sex, breed, vaccinated, healthStatus, image_id, quantity, keywords } = req.body;
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
         };
         const newPet = new Pet({
             name,
+            description,
+            age,
             sex,
             breed,
             vaccinated,
             healthStatus,
             image_id,
-            quantity
+            quantity,
+            keywords
         });
 
         const savedPet = await newPet.save();
@@ -30,15 +33,16 @@ const addPet = async (req, res) => {
 // Update a pet by id
 const updatePet = async (req, res) => {
     try {
-        const { id, ...updates } = req.body;
+        const { id } = req.params; // Lấy id từ params
+        const updates = req.body;
 
-        const updatedPet = await Pet.findByIdAndUpdate( {_id: id}, updates, { new: true });
+        const updatedPet = await Pet.findByIdAndUpdate(id, updates, { new: true });
         if (!updatedPet) {
             return res.status(404).json({ message: 'Pet not found' });
         }
         res.status(200).json({ message: 'Pet updated successfully', pet: updatedPet });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update pet', error });
+        res.status(500).json({ message: 'Failed to update pet', error: error.message });
     }
 };
 
@@ -75,7 +79,16 @@ const getPetDetail = async (req, res) => {
 // Get all pets
 const getAllPets = async (req, res) => {
     try {
-        const pets = await Pet.find({ deleted: { $ne: true } });
+        const { page = 1, limit = 15 } = req.query;
+
+        const skip = (page - 1) * limit;
+
+        const pets = await Pet.find({ deleted: false })
+            .skip(skip) 
+            .limit(Number(limit)); 
+        
+        const totalPets = await Pet.countDocuments({ deleted: false });
+
         const petDetails = await Promise.all(pets.map(async (pet) => {
             const petObj = pet.toObject();
             
@@ -97,7 +110,7 @@ const getAllPets = async (req, res) => {
         }));
 
         // Return response
-        res.status(200).json({ data: petDetails });
+        res.status(200).json({ data: petDetails, currentPage: page, totalPages: Math.ceil(totalPets / limit), totalPets });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get pets', error });
     }
@@ -107,15 +120,27 @@ const getAllPets = async (req, res) => {
 // Get pets by query
 const getPetsByQuery = async (req, res) => {
     try {
-        const { species, coatColor, sex } = req.query;
+        const { search, species, coatColor, sex, page = 1, limit = 15 } = req.query;
         
-        const query = {};
+        const query = { deleted: false };
+
+        const skip = (page - 1) * limit;
+        if (search) {
+            query.$text = { $search: search };
+        }
+
         if (species) query.species = species;
         if (coatColor) query.coatColor = coatColor;
         if (sex) query.sex = sex;
 
-        const pets = await Pet.find({ ...query, deleted: { $ne: true } }); // Exclude deleted pets
-        res.status(200).json({ data: pets });
+
+
+        const pets = await Pet.find()
+            .skip(skip)
+            .limit(Number(limit));
+        
+        const totalPets = await Pet.countDocuments({ deleted: false });
+        res.status(200).json({ data: pets, currentPage: page, totalPages: Math.ceil(totalPets / limit), totalPets });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get pets', error });
     }
