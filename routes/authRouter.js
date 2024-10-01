@@ -133,9 +133,13 @@ const AuthController = require('../controllers/Auth.controllers');
  *           schema:
  *             type: object
  *             required:
+ *               - username
  *               - email
  *               - password
  *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username of the user
  *               email:
  *                 type: string
  *                 format: email
