@@ -19,7 +19,13 @@ const AdoptionRequestRoute = require('./routes/adoptionRequestRouter');
 const CartPetRoute = require('./routes/cartPetRouter');
 const ReviewRoute = require('./routes/reviewRouter');
 
+const PayOS = require('@payos/node');
 dotenv.config();
+
+const payos = new PayOS(process.env.PAYOS_API_KEY, 
+    process.env.PAYOS_API_SECRET, 
+    process.env.PAYOS_ENVIRONMENT
+);
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -27,7 +33,7 @@ const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
 
 // Middleware setup
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 
@@ -41,6 +47,33 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
         '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }',
     customCssUrl: CSS_URL,
 }));
+
+
+app.post('/api/create-payment-link', async (req, res) => {
+  try {
+    const { amount, orderCode  } = req.body;
+
+    const order = {
+      amount,
+      orderCode,
+      description: `Payment for order ${orderCode}`,
+      returnUrl: "",
+      cancelUrl: "",
+    };
+
+    const paymentLink = await payos.createPaymentLink(order);
+    res.json({ checkoutUrl: paymentLink.checkoutUrl });
+    } catch (error) {
+    console.error(error);
+    res.status(400).json({ success: false, message: error.message });
+  }
+})
+
+app.post('/receive-hook', async (req, res) => {
+  const {data} = req.body;
+  res.json();
+});
+
 
 // Define routes
 app.use('/api/cart', CartRouter);

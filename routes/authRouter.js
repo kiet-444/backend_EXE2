@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/Auth.controllers');
 
+
 /**
  * @swagger
  * components:
@@ -43,6 +44,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *         role: admin
  *         firstLogin: true
  */
+
 
 /**
  * @swagger
@@ -120,6 +122,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *                   description: Error message
  */
 
+
 /**
  * @swagger
  * /api/auth/login:
@@ -181,7 +184,10 @@ const AuthController = require('../controllers/Auth.controllers');
  */
 
 
+
+
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
+
 
 module.exports = router;
