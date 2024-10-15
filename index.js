@@ -18,14 +18,13 @@ const UserRoute = require('./routes/userRouter');
 const AdoptionRequestRoute = require('./routes/adoptionRequestRouter');
 const CartPetRoute = require('./routes/cartPetRouter');
 const ReviewRoute = require('./routes/reviewRouter');
+const FundRoute = require('./routes/fundRouter');
+const InvoiceRoute = require('./routes/invoiceRouter');
 
-const PayOS = require('@payos/node');
 dotenv.config();
 
-const payos = new PayOS(process.env.PAYOS_API_KEY, 
-    process.env.PAYOS_API_SECRET, 
-    process.env.PAYOS_ENVIRONMENT
-);
+const Invoice = require('./models/Invoice');
+const Fund = require('./models/Fund');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -33,7 +32,7 @@ const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
 
 // Middleware setup
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:3000',
     credentials: true,
 }));
 
@@ -49,29 +48,37 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 }));
 
 
-app.post('/api/create-payment-link', async (req, res) => {
-  try {
-    const { amount, orderCode  } = req.body;
-
-    const order = {
-      amount,
-      orderCode,
-      description: `Payment for order ${orderCode}`,
-      returnUrl: "",
-      cancelUrl: "",
-    };
-
-    const paymentLink = await payos.createPaymentLink(order);
-    res.json({ checkoutUrl: paymentLink.checkoutUrl });
-    } catch (error) {
-    console.error(error);
-    res.status(400).json({ success: false, message: error.message });
-  }
-})
-
 app.post('/receive-hook', async (req, res) => {
-  const {data} = req.body;
-  res.json();
+  const { data } = req.body;
+
+  if (data.code === '00') {
+
+    const invoice = await Invoice.findOne({ orderCode: data.orderCode });
+
+    if (invoice) {
+      await Invoice.findOneAndUpdate(
+        { orderCode: data.orderCode },
+        { status: 'Paid' },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Invoice updated to Paid" });
+    }
+
+    const fund = await Fund.findOne({ orderCode: data.orderCode });
+
+    if (fund) {
+      await Fund.findOneAndUpdate(
+        { orderCode: data.orderCode },
+        { status: 'approved' },
+        { new: true }
+      );
+      return res.status(200).json({ message: "Fund updated to approved" });
+    }
+
+    return res.status(404).json({ message: "Neither invoice nor fund found" });
+  } else {
+    return res.status(400).json({ message: "Invalid status code" });
+  }
 });
 
 
@@ -86,6 +93,8 @@ app.use('/api/users', UserRoute);
 app.use('/api/request', AdoptionRequestRoute);
 app.use('/api/cart-pets', CartPetRoute);
 app.use('/api', ReviewRoute);
+app.use('/api', FundRoute);
+app.use('/api', InvoiceRoute);
 
 // Connect to MongoDB
 connect();

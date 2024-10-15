@@ -20,6 +20,7 @@ const petSchema = new mongoose.Schema({
     },
     image_id: { type: String, required: true },
     quantity: { type: Number, required: true, default: 1 },
+    location: { type: String, required: true },
     keywords: [{ type: String }],
     deleted: { type: Boolean, default: false },
     
