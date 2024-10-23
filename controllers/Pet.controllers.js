@@ -4,17 +4,19 @@ const Media = require('../models/Media');
 // Add a new pet
 const addPet = async (req, res) => {
     try {
-        const { name, description, age, sex, breed, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
+        const { name, description, age, sex, species, breed, coatColor, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
         };
         const newPet = new Pet({
             name,
-            description,
             age,
             sex,
+            coatColor,
+            species,
             breed,
+            description,
             vaccinated,
             healthStatus,
             image_id,
@@ -65,9 +67,9 @@ const deletePet = async (req, res) => {
 
 const getPetDetail = async (req, res) => {
     try {
-        const { id } = req.body
+        const { id } = req.params;
 
-        const pet = await Pet.findById({_id:id});
+        const pet = await Pet.findById({ _id: id });
         if (!pet) {
             return res.status(404).json({ message: 'Pet not found' });
         }
