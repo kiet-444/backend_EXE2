@@ -13,9 +13,12 @@ const PetController = require('../controllers/Pet.controllers');
  *         - sex
  *         - age
  *         - species
+ *         - coatColor
  *         - breed
+ *         - description
  *         - vaccinated
  *         - healthStatus
+ *         - location
  *         - image_id
  *       properties:
  *         name:
@@ -27,12 +30,18 @@ const PetController = require('../controllers/Pet.controllers');
  *         age:
  *           type: number
  *           description: The age of the pet
+ *         coatColor:
+ *           type: string
+ *           description: The coat color of the pet
  *         species:
  *           type: string
  *           description: The species of the pet
  *         breed:
  *           type: string
  *           description: The breed of the pet
+ *         description:
+ *           type: string
+ *           description: The description of the pet
  *         vaccinated:
  *           type: boolean
  *           description: Whether the pet has been vaccinated
@@ -42,13 +51,21 @@ const PetController = require('../controllers/Pet.controllers');
  *         image_id:
  *           type: string
  *           description: The image id of the pet
+ *         location:
+ *           type: string
+ *           description: The location of the pet
  *       example:
  *         name: "Fluffy"
  *         sex: "Female"
+ *         age: 5
+ *         species: "Cat"
+ *         coatColor: "Black"
  *         breed: "Labrador"
+ *         description: "Cute and cuddly"
  *         vaccinated: true
  *         healthStatus: "Healthy"
  *         image_id: "sample_image_id"
+ *         location: "123 Main St, Anytown USA"
  */
 
 /**
