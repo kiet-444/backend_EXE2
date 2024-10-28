@@ -199,7 +199,7 @@ router.get('/all', PetController.getAllPets);
  *       500:
  *         description: Failed to get pet details
  */
-router.get('/pets/:id', PetController.getPetDetail);
+router.get('/:id', PetController.getPetDetail);
 
 /**
  * @swagger

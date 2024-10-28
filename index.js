@@ -32,7 +32,7 @@ const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
 
 // Middleware setup
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 
