@@ -43,11 +43,11 @@ setupSocket(io);
 
 
 const port = process.env.PORT || 3001;
-const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
+const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
 // Middleware setup
 app.use(cors({
-    origin: '*',
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 
