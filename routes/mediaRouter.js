@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const MediaController = require('../controllers/Media.controllers');
+const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
 
 /**
  * @swagger
@@ -80,5 +81,7 @@ const MediaController = require('../controllers/Media.controllers');
  *         description: Failed to upload image
  */
 router.post('/media', MediaController.upload);
+
+router.delete('/media/:id', verifyToken, isAdmin, MediaController.deleteMedia);
 
 module.exports = router;

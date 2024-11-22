@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbox - Client</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; }
+        #form { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Client Chatbox</h1>
+    <div id="messages"></div>
+    <form id="form">
+        <input id="message" autocomplete="off" placeholder="Type your message here..." />
+        <button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById('form');
+        const input = document.getElementById('message');
+        const messages = document.getElementById('messages');
+
+        // Gửi tin nhắn đến server
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+                const userMessage = input.value;
+                
+                // Hiển thị tin nhắn của người dùng trên giao diện
+                const userMessageItem = document.createElement('div');
+                userMessageItem.textContent = `You: ${userMessage}`;
+                messages.appendChild(userMessageItem);
+                
+                // Gửi tin nhắn từ client đến server
+                socket.emit('client message', userMessage);
+                input.value = ''; // Làm sạch ô input
+                messages.scrollTop = messages.scrollHeight; // Cuộn xuống dưới cùng để thấy tin nhắn mới
+            }
+        });
+
+        // Nhận tin nhắn từ admin
+        socket.on('chat message', ({ from, msg }) => {
+            const item = document.createElement('div');
+            item.textContent = `${from}: ${msg}`;
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight; // Cuộn xuống dưới cùng để thấy tin nhắn mới
+        });
+    </script>
+</body>
+</html>

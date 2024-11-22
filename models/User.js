@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    role: { 
+        type: String, 
+        enum: ['user', 'admin', 'sales-admin', 'adopted-admin', 'sponsor'], 
+        default: 'user' 
+    },
     firstLogin: {
         type: Boolean, default: function () {
             return this.role === 'admin' ? true : undefined;
@@ -13,6 +17,8 @@ const userSchema = new mongoose.Schema({
     },
     address: { type: String },
     phoneNumber: { type: Number, unique: true },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: String,
 }, { timestamps: true });
 
 // Hash the password before saving the user
