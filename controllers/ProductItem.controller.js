@@ -58,7 +58,7 @@ const updateProduct = async (req, res) => {
 // Lấy sản phẩm theo query
 const getProductByQuery = async (req, res) => {
     try {
-        const { search, category, minPrice, maxPrice, page = 1, limit = 10, sort, inStock } = req.query;
+        const { search, name, category, minPrice, maxPrice, page = 1, limit = 10, sort, inStock } = req.query;
         const query = { deleted: false };
         const skip = (page - 1) * limit;
 
@@ -67,9 +67,12 @@ const getProductByQuery = async (req, res) => {
             query.$text = { $search: search };
         }
 
+        if (name) {
+            query.name = { $regex: name, $options: "i" };
+        }
         // Nếu có lọc theo category
         if (category) {
-            query.category = category;
+            query.category = { $regex: category, $options: "i" };
         }
 
         // Lọc theo khoảng giá
@@ -91,6 +94,7 @@ const getProductByQuery = async (req, res) => {
             sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1; // Sắp xếp giảm hoặc tăng
         }
 
+        console.log("Check Q:",query);
         // Tìm kiếm sản phẩm
         const products = await ProductItem.find(query)
             .sort(sortOptions)

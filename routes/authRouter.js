@@ -188,6 +188,46 @@ const AuthController = require('../controllers/Auth.controllers');
 
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
+/**
+ * @swagger
+ * /api/auth/verify-email:
+ *   get:
+ *     summary: Verify user email
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Verification token
+ *     responses:
+ *       200:
+ *         description: User email verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 error_code:
+ *                   type: number
+ *                   description: Error code
+ *                   example: 0
+ *       400:
+ *         description: Invalid or expired verification token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ */
+router.get('/verify-email', AuthController.verifyEmail);
 
 
 module.exports = router;

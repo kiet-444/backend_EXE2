@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const PetController = require('../controllers/Pet.controllers');
 
+
 /**
  * @swagger
  * components:
@@ -25,7 +26,7 @@ const PetController = require('../controllers/Pet.controllers');
  *           type: string
  *           description: The name of the pet
  *         sex:
- *           type: string
+*           type: string
  *           description: The sex of the pet
  *         age:
  *           type: number
@@ -67,7 +68,6 @@ const PetController = require('../controllers/Pet.controllers');
  *         image_id: "sample_image_id"
  *         location: "123 Main St, Anytown USA"
  */
-
 /**
  * @swagger
  * /api/pets/add:
@@ -92,6 +92,7 @@ const PetController = require('../controllers/Pet.controllers');
  */
 router.post('/add', PetController.addPet);
 
+
 /**
  * @swagger
  * /api/pets/update:
@@ -111,7 +112,7 @@ router.post('/add', PetController.addPet);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Pet'
- *       400:
+*       400:
  *         description: Pet ID is required
  *       404:
  *         description: Pet not found
@@ -119,6 +120,7 @@ router.post('/add', PetController.addPet);
  *         description: Failed to update pet
  */
 router.put('/update/:id', PetController.updatePet);
+
 
 /**
  * @swagger
@@ -176,33 +178,6 @@ router.get('/all', PetController.getAllPets);
 
 /**
  * @swagger
- * /api/pets/{id}:
- *   get:
- *     summary: Get a pet by id
- *     tags: [Pet]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The pet id
- *     responses:
- *       200:
- *         description: Pet details
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Pet'
- *       404:
- *         description: Pet not found
- *       500:
- *         description: Failed to get pet details
- */
-router.get('/:id', PetController.getPetDetail);
-
-/**
- * @swagger
  * /api/pets/query:
  *   get:
  *     summary: Get pets by query
@@ -240,7 +215,7 @@ router.get('/:id', PetController.getPetDetail);
  *         description: The health status of the pet
  *     responses:
  *       200:
- *         description: List of pets matching the query
+*         description: List of pets matching the query
  *         content:
  *           application/json:
  *             schema:
@@ -250,6 +225,37 @@ router.get('/:id', PetController.getPetDetail);
  *       500:
  *         description: Failed to get pets
  */
-router.get('/pets/query', PetController.getPetsByQuery);
+router.get('/', PetController.getPetsByQuery);
+
+
+/**
+ * @swagger
+ * /api/pets/{id}:
+ *   get:
+ *     summary: Get a pet by id
+ *     tags: [Pet]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The pet id
+ *     responses:
+ *       200:
+ *         description: Pet details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Pet'
+ *       404:
+ *         description: Pet not found
+ *       500:
+*         description: Failed to get pet details
+ */
+router.get('/:id', PetController.getPetDetail);
+
+
+
 
 module.exports = router;

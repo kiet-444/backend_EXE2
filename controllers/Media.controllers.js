@@ -1,5 +1,4 @@
 const cloudinary = require('../config/cloudinary.config'); // Adjust the path if necessary
-const { PassThrough } = require('stream');
 const Media = require('../models/Media');
 
 const upload = async (req, res) => {
@@ -47,6 +46,32 @@ const upload = async (req, res) => {
     }
 };
 
+const deleteMedia = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find the media in the database to get the Cloudinary public_id
+        const media = await Media.findById(id);
+        if (!media) {
+            return res.status(404).json({ message: 'Media not found' });
+        }
+
+        // Delete the file from Cloudinary
+        cloudinary.uploader.destroy(media.id, async (error, result) => {
+            if (error) {
+                return res.status(500).json({ error: 'Failed to delete media from Cloudinary' });
+            }
+
+            // Only delete from the database if Cloudinary deletion succeeded
+            await Media.findByIdAndDelete(id);
+            res.status(200).json({ message: 'Media deleted successfully from database and Cloudinary' });
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to delete media', error });
+    }
+};
+
 module.exports = {
-    upload
+    upload, 
+    deleteMedia
 };

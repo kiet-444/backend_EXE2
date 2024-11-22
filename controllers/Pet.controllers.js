@@ -4,19 +4,17 @@ const Media = require('../models/Media');
 // Add a new pet
 const addPet = async (req, res) => {
     try {
-        const { name, description, age, sex, species, breed, coatColor, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
+        const { name, description, age, sex, breed, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
         };
         const newPet = new Pet({
             name,
+            description,
             age,
             sex,
-            coatColor,
-            species,
             breed,
-            description,
             vaccinated,
             healthStatus,
             image_id,
@@ -64,9 +62,9 @@ const deletePet = async (req, res) => {
     }
 };
 
-
 const getPetDetail = async (req, res) => {
     try {
+        console.log("Check");
         const { id } = req.params;
 
         const pet = await Pet.findById({ _id: id });
@@ -78,6 +76,7 @@ const getPetDetail = async (req, res) => {
         res.status(500).json({ message: 'Failed to get pet details', error });
     }
 };
+
 
 // Get all pets
 const getAllPets = async (req, res) => {
@@ -126,28 +125,35 @@ const getPetsByQuery = async (req, res) => {
         const { search, species, coatColor, sex, page = 1, limit = 15 } = req.query;
         
         const query = { deleted: false };
-
         const skip = (page - 1) * limit;
+
         if (search) {
-            query.$text = { $search: search };
+            query.name = { $regex: search, $options: "i" };
         }
+        
+        if (species) query.species = { $regex: species, $options: "i" };
+        if (coatColor) query.coatColor = { $regex: coatColor, $options: "i" };
+        if (sex) query.sex = { $regex: sex, $options: "i" };
 
-        if (species) query.species = species;
-        if (coatColor) query.coatColor = coatColor;
-        if (sex) query.sex = sex;
+        console.log(query);
 
-
-
-        const pets = await Pet.find()
+        const pets = await Pet.find(query)
             .skip(skip)
             .limit(Number(limit));
         
-        const totalPets = await Pet.countDocuments({ deleted: false });
-        res.status(200).json({ data: pets, currentPage: page, totalPages: Math.ceil(totalPets / limit), totalPets });
+        const totalPets = await Pet.countDocuments(query);
+        
+        res.status(200).json({
+            data: pets,
+            currentPage: page,
+            totalPages: Math.ceil(totalPets / limit),
+            totalPets
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get pets', error });
     }
 };
+
 
 module.exports = {
     addPet,

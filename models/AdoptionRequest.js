@@ -12,6 +12,7 @@ const adoptionRequestSchema = new mongoose.Schema({
         default: 'pending'  // Trạng thái: pending (chờ xét duyệt), approved (đã duyệt), rejected (bị từ chối)
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người gửi yêu cầu nhận nuôi
+    countDay: { type: Number, required: true, default: 0 },
 }, { timestamps: true });
 
 const AdoptionRequest = mongoose.model('AdoptionRequest', adoptionRequestSchema);
