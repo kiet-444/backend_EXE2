@@ -104,7 +104,25 @@ const updateStatusAdoptionRequest = async (req, res) => {
 }
 
 
+const countDay = async (req, res) => {
+    try {
+        const adoptionRequests = await AdoptionRequest.find();
+        adoptionRequests.forEach(async (request) => {
+            if(request.status === 'approved' || request.status === 'rejected') {
+                request.countDay += 1;
+                await request.save();
+            }
+            if(request.countDay === 7) {
+                await request.remove();
+            }
+        })
+        res.status(200).json({ message: 'Count day successfully', data: adoptionRequests });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to count day', error });
+    }
+}
+
 
 module.exports = {
-    createAdoptionRequest, getAllAdoptionRequest, updateStatusAdoptionRequest
+    createAdoptionRequest, getAllAdoptionRequest, updateStatusAdoptionRequest, countDay
 }

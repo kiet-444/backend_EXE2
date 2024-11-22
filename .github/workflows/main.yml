@@ -1,0 +1,21 @@
+name: Cron Jobs
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Every day at midnight UTC
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  log-time:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log Current Time
+        run: |
+          echo "Current Time: $(date)"
+
+  call-vercel-api-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cron Job 1
+        run: |
+          curl -X GET https:/api/request/count-day

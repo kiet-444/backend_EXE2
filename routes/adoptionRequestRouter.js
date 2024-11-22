@@ -43,6 +43,41 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
 router.post('/adoption-request', verifyToken, AdoptionRequestController.createAdoptionRequest);
 
 // Get adoption requests
+/**
+ * @swagger
+ * /api/adoption-request:
+ *   get:
+ *     summary: Get adoption requests
+ *     tags: [AdoptionRequest]
+ *     responses:
+ *       200:
+ *         description: Adoption requests retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/AdoptionRequest'
+ *                 message:
+ *                   type: string
+ *                   description: The message of the response
+ *       500:
+ *         description: Failed to get adoption requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The message of the response
+ *                 error:
+ *                   type: string
+ *                   description: The error code
+ */
 router.get('/adoption-request', verifyToken, AdoptionRequestController.getAllAdoptionRequest);
 
 // Update status adoption request
@@ -82,5 +117,8 @@ router.get('/adoption-request', verifyToken, AdoptionRequestController.getAllAdo
  *                   description: The message of the response
  */
 router.patch('/adoption-request', verifyToken, AdoptionRequestController.updateStatusAdoptionRequest);
+
+
+router.get('/count-day', AdoptionRequestController.countDay);
 
 module.exports = router;

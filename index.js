@@ -28,6 +28,8 @@ const ReviewRoute = require('./routes/reviewRouter');
 const FundRoute = require('./routes/fundRouter');
 const InvoiceRoute = require('./routes/invoiceRouter');
 
+// const { askGPT3_5 } = require('./OpenAI');
+
 dotenv.config();
 
 const Invoice = require('./models/Invoice');
@@ -43,11 +45,11 @@ setupSocket(io);
 
 
 const port = process.env.PORT || 3001;
-const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
+const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
 
 // Middleware setup
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: '*',
     credentials: true,
 }));
 
@@ -110,6 +112,18 @@ app.use('/api/cart-pets', CartPetRoute);
 app.use('/api', ReviewRoute);
 app.use('/api', FundRoute);
 app.use('/api', InvoiceRoute);
+
+
+
+
+app.post('/api/gpt', async (req, res) => {
+    try {
+        const response = await askGPT3_5(req.body.prompt);
+        res.status(200).json({ message: 'GPT-3.5 response', data: response });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch response from OpenAI', error });
+    }
+});
 
 // Connect to MongoDB
 connect();
