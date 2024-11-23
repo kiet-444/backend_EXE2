@@ -142,9 +142,29 @@ const getPetsByQuery = async (req, res) => {
             .limit(Number(limit));
         
         const totalPets = await Pet.countDocuments(query);
+
+        const petDetails = await Promise.all(pets.map(async (pet) => {
+            const petObj = pet.toObject();
+            
+            const media = await Media.findOne({ id: petObj.image_id });
+            if (media) {
+                petObj.image = {
+                    id: media.id,
+                    url: media.url
+                };
+            } else {
+                petObj.image = {
+                    id: petObj.image_id,
+                    url: null
+                };
+            }
+
+            delete petObj.image_id;
+            return petObj;
+        }));
         
         res.status(200).json({
-            data: pets,
+            data: petDetails,
             currentPage: page,
             totalPages: Math.ceil(totalPets / limit),
             totalPets
