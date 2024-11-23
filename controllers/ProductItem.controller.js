@@ -104,8 +104,26 @@ const getProductByQuery = async (req, res) => {
         // Đếm tổng số sản phẩm
         const totalProducts = await ProductItem.countDocuments(query);
 
+        const productDetails = await Promise.all(products.map(async (product) => {
+            const productObj = product.toObject();
+            const media = await Media.findOne({ id: productObj.image_id });
+            if (media) {
+                productObj.image = {
+                    id: media.id,
+                    url: media.url
+                };
+            } else {
+                productObj.image = {
+                    id: productObj.image_id,
+                    url: null
+                };
+            }
+            delete productObj.image_id;
+            return productObj;
+        }));
+
         res.status(200).json({
-            data: products,
+            data: productDetails,
             currentPage: Number(page),
             totalPages: Math.ceil(totalProducts / limit),
             totalProducts,
