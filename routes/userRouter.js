@@ -13,6 +13,7 @@ const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.midd
  *       type: object
  *       required:
  *         - username
+ *         - fullname
  *         - email
  *         - password
  *         - address
