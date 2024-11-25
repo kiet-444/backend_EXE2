@@ -11,6 +11,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *       type: object
  *       required:
  *         - username
+ *         - fullname
  *         - email
  *         - password
  *       properties:
@@ -20,6 +21,9 @@ const AuthController = require('../controllers/Auth.controllers');
  *         username:
  *           type: string
  *           description: The username of the user
+ *         fullname:
+ *           type: string
+ *           description: The fullname of the user
  *         email:
  *           type: string
  *           description: The email of the user
@@ -39,6 +43,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *       example:
  *         id: 60f6c2e2c4a1a72a344f321b
  *         username: johndoe
+ *         fullname: John Doe Nickname
  *         email: johndoe@example.com
  *         password: $2a$10$7R6DhJ6zEJp2c.fXeq6gXe5DLJj.dZz.GO0Vuj1Q5jdpITGzyo3GG
  *         role: admin
@@ -67,6 +72,9 @@ const AuthController = require('../controllers/Auth.controllers');
  *               username:
  *                 type: string
  *                 description: The username of the user
+ *               fullname:
+ *                 type: string
+ *                 description: The fullname of the user
  *               email:
  *                 type: string
  *                 format: email
@@ -82,6 +90,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *                 description: The phone number of the user
  *             example:
  *               username: johndoe
+ *               fullname: John Doe Nickname
  *               email: johndoe@gmail.com
  *               password: strongpassword123
  *               address: 123 Main St
