@@ -28,7 +28,7 @@ const ReviewRoute = require('./routes/reviewRouter');
 const FundRoute = require('./routes/fundRouter');
 const InvoiceRoute = require('./routes/invoiceRouter');
 
-const { askGPT3_5 } = require('./OpenAI');
+// const { askGPT3_5 } = require('./OpenAI');
 
 dotenv.config();
 
@@ -64,6 +64,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCssUrl: CSS_URL,
 }));
 
+///
 
 app.post('/receive-hook', async (req, res) => {
   const { data } = req.body;
@@ -116,14 +117,14 @@ app.use('/api', InvoiceRoute);
 
 
 
-app.post('/api/gpt', async (req, res) => {
-    try {
-        const response = await askGPT3_5(req.body.prompt);
-        res.status(200).json({ message: 'GPT-3.5 response', data: response });
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch response from OpenAI', error });
-    }
-});
+// app.post('/api/gpt', async (req, res) => {
+//     try {
+//         const response = await askGPT3_5(req.body.prompt);
+//         res.status(200).json({ message: 'GPT-3.5 response', data: response });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Failed to fetch response from OpenAI', error });
+//     }
+// });
 
 // Connect to MongoDB
 connect();
