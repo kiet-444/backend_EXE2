@@ -152,7 +152,7 @@ router.delete('/delete/:id', verifyToken, CartController.deleteCartItem);
 
 /**
  * @swagger
- * /api/cart:
+ * /api/cart/all:
  *   get:
  *     summary: Get all cart items for a user
  *     tags: [Cart]
@@ -178,7 +178,7 @@ router.delete('/delete/:id', verifyToken, CartController.deleteCartItem);
  *       500:
  *         description: Failed to get cart items
  */
-router.get('/', verifyToken, CartController.getAllCartItems);
+router.get('/all', verifyToken, CartController.getAllCartItems);
 
 /**
  * @swagger
