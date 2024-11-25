@@ -20,10 +20,10 @@ const transporter = nodemailer.createTransport({
 // Register a new user
 const register = async (req, res) => {
     try {
-        const { username, fullname, email, password, address, phoneNumber } = req.body;
+        const { username, email, password, address, phoneNumber } = req.body;
 
 
-        if (!username || !fullname || !email || !password || !address || !phoneNumber) {
+        if (!username || !email || !password || !address || !phoneNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -42,7 +42,7 @@ const register = async (req, res) => {
 
         const verificationToken = crypto.randomBytes(32).toString('hex');
 
-        const user = new User({ username, fullname, email, password, address, phoneNumber, verificationToken });
+        const user = new User({ username, email, password, address, phoneNumber, verificationToken });
         await user.save();
 
         const verificationLink = `${process.env.BASE_URL}/verify-email?token=${verificationToken}`;
@@ -109,25 +109,6 @@ const verifyEmail = async (req, res) => {
         res.status(500).json({ message: 'Failed to verify email', error });
     }
 };
-
-// const verifyEmail = async (req, res) => {
-//     try {
-//         const { token } = req.query;
-//         const user = await User.findOne({ verificationToken: token });
-
-//         if (!user) {
-//             return res.redirect('/verification-failed');//link khong hop le
-//         }
-//         user.isVerified = true;
-//         user.verificationToken = null;
-//         await user.save();
-
-//         res.redirect('/verification-success');//link hop le
-//     } catch (error) {
-//         console.error(error);
-//         res.redirect('/verification-error');
-//     }
-// };
 
 
 module.exports = { register, login, verifyEmail };

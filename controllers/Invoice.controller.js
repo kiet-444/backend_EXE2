@@ -1,6 +1,6 @@
 const Invoice = require('../models/Invoice');
 const User = require('../models/User');
-const Product  = require('../models/ProductItem');
+const CartItem = require('../models/CartItem');
 
 const PayOS = require('@payos/node');
 const dotenv = require('dotenv');
@@ -12,37 +12,36 @@ const payos = new PayOS(process.env.PAYOS_API_KEY,
 
 const addInvoice = async (req, res) => {
     try {
-        const { productIds, quantities, amount} = req.body;
+        const { firstName, lastName, phoneNumber, street, ward, district, city, amount, shippingFee, totalAmount, cartItemId} = req.body;
         const orderCode = Math.floor(Math.random() * 1000000000);
 
-        const products = await Product.find({ _id: { $in: productIds } });
-
-        if (products.length === 0) {
-            return res.status(400).json({ message: 'No products found for the provided IDs' });
+        const  cartItem = await CartItem.findById(cartItemId);
+        if (!cartItem) {
+            return res.status(404).json({ message: 'Cart item not found' });
         }
-        const items = products.map((product, index) => {
-            const quantity = quantities[index];
-            return {
-                productId: product._id,
-                quantity,
-                price: product.price,
-                subTotal: product.price * quantity
-            };
-        });
 
         const order = {
-            amount,
+            totalAmount,
             orderCode,
             description: `Payment for order ${orderCode}`,
-            returnUrl: "",
-            cancelUrl: "",
+            returnUrl: "https://hopeful-tail-trust-fe.vercel.app/payment-successful",
+            cancelUrl: "https://hopeful-tail-trust-fe.vercel.app/hopeful-tail-trust-fe.vercel.app",
         };
 
         const newInvoice = new Invoice({
             user: req.userId,
             orderCode,
-            totalAmount: amount,
-            items
+            totalAmount: totalAmount,
+            shippingFee,
+            firstName,
+            lastName,
+            phoneNumber,
+            street,
+            ward,
+            district,
+            city,
+            amount,
+            cartItem: cartItemId
         });
         await newInvoice.save();
 

@@ -18,4 +18,4 @@ jobs:
     steps:
       - name: Call Cron Job 1
         run: |
-          curl -X GET https://github.com/kiet-444/backend_EXE2.git
+          curl -X GET https:/api/request/count-day

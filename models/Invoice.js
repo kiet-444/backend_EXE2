@@ -5,26 +5,37 @@ const invoiceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  firstName: {
+    type: String,
+  },
+  lastName: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  street: {
+    type: String,
+  },
+  ward: {
+    type: String,
+  },
+  district: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  amount: {
+    type: Number,
+  },
+  shippingFee: {
+    type: Number,
+  },
   totalAmount: {
     type: Number,
   },
-  items: [
-    {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', 
-      },
-      quantity: {
-        type: Number,
-      },
-      price: {
-        type: Number,
-      },
-      subTotal: {
-        type: Number,
-      },
-    },
-  ],
+  cartItem: { type : mongoose.Schema.Types.ObjectId, ref: 'CartItem' },
   status: {
     type: String,
     enum: ['Pending', 'Paid', 'Cancelled'],
