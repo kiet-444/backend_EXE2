@@ -20,10 +20,10 @@ const transporter = nodemailer.createTransport({
 // Register a new user
 const register = async (req, res) => {
     try {
-        const { username, email, password, address, phoneNumber } = req.body;
+        const { username, fullname, email, password, address, phoneNumber } = req.body;
 
 
-        if (!username || !email || !password || !address || !phoneNumber) {
+        if (!username || !fullname || !email || !password || !address || !phoneNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -42,7 +42,7 @@ const register = async (req, res) => {
 
         const verificationToken = crypto.randomBytes(32).toString('hex');
 
-        const user = new User({ username, email, password, address, phoneNumber, verificationToken });
+        const user = new User({ username, fullname, email, password, address, phoneNumber, verificationToken });
         await user.save();
 
         const verificationLink = `${process.env.BASE_URL}/verify-email?token=${verificationToken}`;

@@ -107,7 +107,7 @@ app.use('/api', MediaRoute);
 app.use('/api/pets', PetRoute);
 app.use('/api/news', NewsRoute);
 app.use('/api/auth', AuthRoute);
-app.use('/api/users', UserRoute);
+app.use('/api/user', UserRoute);
 app.use('/api/request', AdoptionRequestRoute);
 app.use('/api/cart-pets', CartPetRoute);
 app.use('/api', ReviewRoute);

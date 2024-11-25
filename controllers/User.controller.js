@@ -21,6 +21,12 @@ const updateUser = async (req, res) => {
                 return res.status(400).json({ message: 'Password is required for first login' });
             }
         } 
+        
+        if (password) {
+            user.password = password;
+            await user.save();
+            return res.status(200).json({ message: 'Password updated successfully', data: user });
+        }
 
         Object.assign(user, updates);
         const updatedUser = await user.save();
