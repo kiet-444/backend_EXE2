@@ -106,6 +106,8 @@ const getProductByQuery = async (req, res) => {
 
         const productDetails = await Promise.all(products.map(async (product) => {
             const productObj = product.toObject();
+            productObj.id = productObj._id;
+            delete productObj._id;
             const media = await Media.findOne({ id: productObj.image_id });
             if (media) {
                 productObj.image = {
@@ -121,6 +123,7 @@ const getProductByQuery = async (req, res) => {
             delete productObj.image_id;
             return productObj;
         }));
+        
 
         res.status(200).json({
             data: productDetails,

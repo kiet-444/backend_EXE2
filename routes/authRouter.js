@@ -60,6 +60,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *             type: object
  *             required:
  *               - username
+ *               - fullname
  *               - email
  *               - password
  *             properties:
@@ -84,7 +85,7 @@ const AuthController = require('../controllers/Auth.controllers');
  *               email: johndoe@gmail.com
  *               password: strongpassword123
  *               address: 123 Main St
- *               phoneNumber: 123456789
+ *               phoneNumber: 0987654321
  *     responses:
  *       201:
  *         description: User registered successfully

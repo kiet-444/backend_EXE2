@@ -28,7 +28,7 @@ const ReviewRoute = require('./routes/reviewRouter');
 const FundRoute = require('./routes/fundRouter');
 const InvoiceRoute = require('./routes/invoiceRouter');
 
-// const { askGPT3_5 } = require('./OpenAI');
+const { askGPT3_5 } = require('./OpenAI');
 
 dotenv.config();
 

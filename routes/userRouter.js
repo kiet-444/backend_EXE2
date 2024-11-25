@@ -13,7 +13,6 @@ const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.midd
  *       type: object
  *       required:
  *         - username
- *         - fullname
  *         - email
  *         - password
  *         - address
@@ -38,6 +37,9 @@ const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.midd
  *           type: string
  *           description: The phone number of the user
  */
+
+
+
 
 // Update user profile (accessible by user or admin)
 /**
@@ -117,5 +119,33 @@ router.delete('/delete/:id', verifyToken, isAdmin, UserController.deleteUser);
  *         description: Failed to retrieve users
  */
 router.get('/all', verifyToken, isAdmin, UserController.getAllUsers);
+
+// Get user by ID (user or admin)
+/**
+ * @swagger
+ * /api/user/{id}:
+ *   get:
+ *     summary: Get a user by ID
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user to retrieve
+ *     responses:
+ *       200:
+ *         description: User details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to retrieve user
+ */
+router.get('/:id', verifyToken, isUserOrAdmin, UserController.getUserById);
 
 module.exports = router;
