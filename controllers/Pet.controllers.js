@@ -4,7 +4,7 @@ const Media = require('../models/Media');
 // Add a new pet
 const addPet = async (req, res) => {
     try {
-        const { name, description, age, sex, breed, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
+        const { name, description, species, coatColor,  age, sex, breed, vaccinated, healthStatus, image_id, quantity, location, keywords } = req.body;
         const mediaExits = await Media.findOne({ id: image_id });
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
@@ -14,6 +14,8 @@ const addPet = async (req, res) => {
             description,
             age,
             sex,
+            species,
+            coatColor,
             breed,
             vaccinated,
             healthStatus,
@@ -71,7 +73,24 @@ const getPetDetail = async (req, res) => {
         if (!pet) {
             return res.status(404).json({ message: 'Pet not found' });
         }
-        res.status(200).json({ pet });
+        const returnPet = pet.toObject();
+
+        const media = await Media.findOne({ id: returnPet.image_id });
+        if (media) {
+            returnPet.image = {
+                id: media.id,
+                url: media.url
+            };
+        } else {
+            returnPet.image = {
+                id: returnPet.image_id,
+                url: null
+            };
+        }
+
+        delete returnPet.image_id;
+
+        res.status(200).json({ data: returnPet, message: 'Pet retrieved successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get pet details', error });
     }
@@ -122,7 +141,7 @@ const getAllPets = async (req, res) => {
 // Get pets by query
 const getPetsByQuery = async (req, res) => {
     try {
-        const { search, species, coatColor, sex, page = 1, limit = 15 } = req.query;
+        const { search, name, breed, species, coatColor, vaccinated, sex, page = 1, limit = 15 } = req.query;
         
         const query = { deleted: false };
         const skip = (page - 1) * limit;
@@ -130,12 +149,28 @@ const getPetsByQuery = async (req, res) => {
         if (search) {
             query.name = { $regex: search, $options: "i" };
         }
+
+        if (name) query.name = { $regex: name, $options: "i" };
+
+        if (breed) query.breed = { $regex: breed, $options: "i" };
+
+        if (vaccinated) {
+            if (vaccinated.includes('-')) { 
+                const [min, max] = vaccinated.split('-').map(Number);
+                query.vaccinated = { $gte: min, $lte: max };
+            } else { 
+                query.vaccinated = Number(vaccinated);
+            }
+        }
         
+        // if (vaccinated) query.vaccinated = { $regex: vaccinated, $options: "i" };
         if (species) query.species = { $regex: species, $options: "i" };
         if (coatColor) query.coatColor = { $regex: coatColor, $options: "i" };
         if (sex) query.sex = { $regex: sex, $options: "i" };
 
         console.log(query);
+
+        
 
         const pets = await Pet.find(query)
             .skip(skip)

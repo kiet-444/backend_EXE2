@@ -7,7 +7,7 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
 // Create new adoption request
 /**
  * @swagger
- * /api/request/adoption-request:
+ * /api/adoption-request:
  *   post:
  *     summary: Create new adoption request
  *     tags: [AdoptionRequest]
@@ -80,6 +80,24 @@ router.post('/adoption-request', verifyToken, AdoptionRequestController.createAd
  */
 router.get('/adoption-request', verifyToken, AdoptionRequestController.getAllAdoptionRequest);
 
+
+// Get adoption request by id
+/**
+ * @swagger
+ * /api/request/adoption-request/{id}:
+ *   get:
+ *     summary: Get adoption request by id
+ *     tags: [AdoptionRequest]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the adoption request
+ *         schema:
+ *           type: string
+ */
+router.get('/adoption-request/:id', verifyToken, AdoptionRequestController.getAdoptionRequestById);
+
 // Update status adoption request
 
 /**
@@ -117,6 +135,9 @@ router.get('/adoption-request', verifyToken, AdoptionRequestController.getAllAdo
  *                   description: The message of the response
  */
 router.patch('/adoption-request', verifyToken, AdoptionRequestController.updateStatusAdoptionRequest);
+
+
+
 
 
 router.get('/count-day', AdoptionRequestController.countDay);

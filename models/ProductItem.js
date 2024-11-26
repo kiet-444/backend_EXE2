@@ -32,12 +32,6 @@ const productItemSchema = new mongoose.Schema({
         required: [true, 'Product code is required'],
         trim: true,
     },
-    rating: {
-        type: Number,
-        default: 0,
-        min: 0,
-        max: 5,
-    },
     category: {
         type: String,
         required: [true, 'Product category is required'],

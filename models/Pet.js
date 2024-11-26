@@ -12,7 +12,7 @@ const petSchema = new mongoose.Schema({
         enum: ['Male', 'Female'],  // Giới hạn các giá trị
     },
     breed: { type: String, required: true },
-    vaccinated: { type: Boolean, required: true },
+    vaccinated: { type: Number, required: true },
     healthStatus: { 
         type: String, 
         required: true,
@@ -23,6 +23,7 @@ const petSchema = new mongoose.Schema({
     location: { type: String, required: true },
     keywords: [{ type: String }],
     deleted: { type: Boolean, default: false },
+    status: { type: String, enum: ['adopted', 'available'], default: 'available' },
     
 }, { timestamps: true });
 

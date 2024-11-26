@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const MediaController = require('../controllers/Media.controllers');
-const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
+
 
 /**
  * @swagger
@@ -82,6 +82,29 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
  */
 router.post('/media', MediaController.upload);
 
-router.delete('/media/:id', verifyToken, isAdmin, MediaController.deleteMedia);
+/**
+ * @swagger
+ * /api/media/{id}:
+ *   delete:
+ *     summary: Delete an image from Cloudinary
+ *     tags: [Media]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the image to be deleted
+ *     responses:
+ *       200:
+ *         description: Image deleted successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Image not found
+ *       500:
+ *         description: Failed to delete image  
+ */
+router.delete('/media/:id', MediaController.deleteMedia);
 
 module.exports = router;
