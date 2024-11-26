@@ -44,8 +44,8 @@ const PetController = require('../controllers/Pet.controllers');
  *           type: string
  *           description: The description of the pet
  *         vaccinated:
- *           type: boolean
- *           description: Whether the pet has been vaccinated
+ *           type: Number
+ *           description: Whether the pet is vaccinated
  *         healthStatus:
  *           type: string
  *           description: The health status of the pet
@@ -63,7 +63,7 @@ const PetController = require('../controllers/Pet.controllers');
  *         coatColor: "Black"
  *         breed: "Labrador"
  *         description: "Cute and cuddly"
- *         vaccinated: true
+ *         vaccinated: 1
  *         healthStatus: "Healthy"
  *         image_id: "sample_image_id"
  *         location: "123 Main St, Anytown USA"
@@ -194,6 +194,16 @@ router.get('/all', PetController.getAllPets);
  *           type: string
  *         description: The breed of the pet
  *       - in: query
+ *         name: coatColor
+ *         schema:
+ *           type: string
+ *         description: The coat color of the pet
+ *       - in: query
+ *         name: sex
+ *         schema:
+ *           type: string       
+ *           description: The sex of the pet
+ *       - in: query
  *         name: species
  *         schema:
  *           type: string
@@ -206,13 +216,8 @@ router.get('/all', PetController.getAllPets);
  *       - in: query
  *         name: vaccinated
  *         schema:
- *           type: boolean
- *         description: Whether the pet has been vaccinated
- *       - in: query
- *         name: healthStatus
- *         schema:
  *           type: string
- *         description: The health status of the pet
+ *         description: Number of vaccine doses (e.g., "2" or "2-4" for a range)
  *     responses:
  *       200:
 *         description: List of pets matching the query
@@ -225,7 +230,7 @@ router.get('/all', PetController.getAllPets);
  *       500:
  *         description: Failed to get pets
  */
-router.get('/', PetController.getPetsByQuery);
+router.get('/query', PetController.getPetsByQuery);
 
 
 /**

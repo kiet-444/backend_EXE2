@@ -1,5 +1,6 @@
 const AdoptionRequest = require('../models/AdoptionRequest');
 const CartPet = require('../models/CartPet');
+const Pet = require('../models/Pet');
 
 const createAdoptionRequest = async (req, res) =>  {
     try {
@@ -62,6 +63,19 @@ const getAllAdoptionRequest = async (req, res) => {
     }
 }
 
+// get by id
+const getAdoptionRequestById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const adoptionRequest = await AdoptionRequest.findById(id);
+        if (!adoptionRequest) {
+            return res.status(404).json({ message: 'Adoption request not found' });
+        }
+        res.status(200).json({ data: adoptionRequest, message: 'Adoption request retrieved successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to get adoption request', error });
+    }
+}
 
 // Update status of an adoption request
 const updateStatusAdoptionRequest = async (req, res) => {
@@ -85,15 +99,28 @@ const updateStatusAdoptionRequest = async (req, res) => {
                 { userId, petId },
                 { $set: { status: 'approved' } }
             );
+            await Pet.findOneAndUpdate(
+                { _id: petId },
+                { $set: { status: 'adopted' } }
+            )
+
         } else if (newStatus === 'rejected') {
             await CartPet.findOneAndUpdate(
                 { userId, petId },
                 { $set: { status: 'rejected' } }
+            );
+            await Pet.findOneAndUpdate(
+                { _id: petId },
+                { $set: { status: 'available' } }
             )
         } else if (newStatus === 'pending') {
             await CartPet.findOneAndUpdate(
                 { userId, petId },
                 { $set: { status: 'pending' } }
+            );
+            await Pet.findOneAndUpdate(
+                { _id: petId },
+                { $set: { status: 'available' } }
             )
         }
 
@@ -124,5 +151,5 @@ const countDay = async (req, res) => {
 
 
 module.exports = {
-    createAdoptionRequest, getAllAdoptionRequest, updateStatusAdoptionRequest, countDay
+    createAdoptionRequest, getAllAdoptionRequest, updateStatusAdoptionRequest, countDay, getAdoptionRequestById
 }

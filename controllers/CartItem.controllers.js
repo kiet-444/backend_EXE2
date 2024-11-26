@@ -71,26 +71,30 @@ const getAllCartItems = async (req, res) => {
             query.category = category;
         }
 
-        const cartItems = await CartItem.find(query).populate('productId').sort({ createdAt: -1 });
+        const cartItems = await CartItem.find(query).sort({ createdAt: -1 });
 
-        if (cartItems.length === 0) {
+        const updateCartItems = await Promise.all(
+            cartItems.map(async (item) => {
+                const product = await Product.findById(item.productId);
+                const subtotal = item.quantity * product.price;
+                return {
+                    ...item._doc,
+                    subtotal,
+                };
+            })
+        );
+
+        if (updateCartItems.length === 0) {
             return res.status(404).json({ message: 'No cart items found' });
         }
 
-        let totalCartValue = 0;
-
-        const cartItemsWithSubtotal = cartItems.map(item => {
-            const subtotal = item.quantity * item.productId.price;
-            totalCartValue += subtotal; 
-            return {
-                ...item._doc,  
-                subtotal     
-            };
-        });
+        const cartItemsWithSubtotal = updateCartItems.reduce((acc, item) => {
+            acc.total += item.subtotal;
+            return acc;
+        }, { total: 0 });
 
         res.status(200).json({
-            data: {...cartItemsWithSubtotal._doc,
-            totalCartValue }
+            data: {cartItems: updateCartItems, totalCartValue: cartItemsWithSubtotal.total}
             , message: 'Cart items retrieved successfully'
         });
     } catch (error) {
@@ -102,12 +106,17 @@ const getCartItemDetail = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const cartItem = await CartItem.findById({_id: id}).populate('productId');
+        const cartItem = await CartItem.findById(id);
         if (!cartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
+        const product = await Product.findById(cartItem.productId);
 
-        const subtotal = cartItem.quantity * cartItem.productId.price;
+        if(!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const subtotal = cartItem.quantity * product.price;
         res.status(200).json({ data: {
             ...cartItem._doc,
             subtotal

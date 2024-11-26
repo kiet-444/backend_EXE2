@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/Auth.controllers');
+const passport = require('../config/passport');
 
 
 /**
@@ -11,7 +12,6 @@ const AuthController = require('../controllers/Auth.controllers');
  *       type: object
  *       required:
  *         - username
- *         - fullname
  *         - email
  *         - password
  *       properties:
@@ -21,9 +21,6 @@ const AuthController = require('../controllers/Auth.controllers');
  *         username:
  *           type: string
  *           description: The username of the user
- *         fullname:
- *           type: string
- *           description: The fullname of the user
  *         email:
  *           type: string
  *           description: The email of the user
@@ -43,7 +40,6 @@ const AuthController = require('../controllers/Auth.controllers');
  *       example:
  *         id: 60f6c2e2c4a1a72a344f321b
  *         username: johndoe
- *         fullname: John Doe Nickname
  *         email: johndoe@example.com
  *         password: $2a$10$7R6DhJ6zEJp2c.fXeq6gXe5DLJj.dZz.GO0Vuj1Q5jdpITGzyo3GG
  *         role: admin
@@ -65,16 +61,12 @@ const AuthController = require('../controllers/Auth.controllers');
  *             type: object
  *             required:
  *               - username
- *               - fullname
  *               - email
  *               - password
  *             properties:
  *               username:
  *                 type: string
  *                 description: The username of the user
- *               fullname:
- *                 type: string
- *                 description: The fullname of the user
  *               email:
  *                 type: string
  *                 format: email
@@ -90,11 +82,10 @@ const AuthController = require('../controllers/Auth.controllers');
  *                 description: The phone number of the user
  *             example:
  *               username: johndoe
- *               fullname: John Doe Nickname
  *               email: johndoe@gmail.com
  *               password: strongpassword123
  *               address: 123 Main St
- *               phoneNumber: 0987654321
+ *               phoneNumber: 123456789
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -238,6 +229,62 @@ router.post('/login', AuthController.login);
  *                   description: Error message
  */
 router.get('/verify-email', AuthController.verifyEmail);
+
+
+
+/**
+ * @swagger
+ * /api/auth/google:
+ *   get:
+ *     summary: Google OAuth2 login
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: Redirects to Google OAuth2 login page
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ */
+
+router.get('/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+/**
+ * @swagger
+ * /api/auth/google/callback:
+ *   get:
+ *     summary: Google OAuth2 callback
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ */
+router.get(
+    '/google/callback',
+    passport.authenticate('google', { session: false }),
+    (req, res) => {
+        const {  token } = req.user;
+
+        res.json({ message: 'Login successful',  token });
+    }
+);
 
 
 module.exports = router;

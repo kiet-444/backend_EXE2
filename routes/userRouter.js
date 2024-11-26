@@ -4,6 +4,7 @@ const router = express.Router();
 const UserController = require('../controllers/User.controller');
 const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.middleware');
 
+
 /**
  * swagger
  * @swagger
@@ -45,6 +46,10 @@ const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.midd
 
 
 
+
+
+
+
 // Update user profile (accessible by user or admin)
 /**
 * @swagger
@@ -79,6 +84,7 @@ const { verifyToken, isAdmin, isUserOrAdmin } = require('../middleWare/auth.midd
 */
 router.put('/update/:id', verifyToken, isUserOrAdmin, UserController.updateUser);
 
+
 // Delete user (admin only)
 /**
 * @swagger
@@ -103,6 +109,7 @@ router.put('/update/:id', verifyToken, isUserOrAdmin, UserController.updateUser)
 */
 router.delete('/delete/:id', verifyToken, isAdmin, UserController.deleteUser);
 
+
 // Get all users (admin only)
 /**
  * @swagger
@@ -123,6 +130,7 @@ router.delete('/delete/:id', verifyToken, isAdmin, UserController.deleteUser);
  *         description: Failed to retrieve users
  */
 router.get('/all', verifyToken, isAdmin, UserController.getAllUsers);
+
 
 // Get user by ID (user or admin)
 /**
@@ -151,5 +159,6 @@ router.get('/all', verifyToken, isAdmin, UserController.getAllUsers);
  *         description: Failed to retrieve user
  */
 router.get('/:id', verifyToken, isUserOrAdmin, UserController.getUserById);
+
 
 module.exports = router;

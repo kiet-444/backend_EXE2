@@ -136,4 +136,6 @@ router.post('/invoice', verifyToken, InvoiceController.addInvoice);
 // Get invoices
 router.get('/invoice', verifyToken, InvoiceController.getInvoices);
 
+// router.post('/test-payos', InvoiceController.testPayOS);
+
 module.exports = router;

@@ -64,7 +64,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCssUrl: CSS_URL,
 }));
 
-///
 
 app.post('/receive-hook', async (req, res) => {
   const { data } = req.body;

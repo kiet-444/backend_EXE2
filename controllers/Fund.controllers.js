@@ -10,13 +10,13 @@ const payos = new PayOS(process.env.PAYOS_API_KEY,
 const addFund = async (req, res) => {  
     try {
         const { amount } = req.body;
-        const orderCode = Math.floor(Math.random() * 1000000000);
+        const orderCode = Math.floor(Math.random() * 10000000);
         const order = {
             amount,
             orderCode,
             description: `Payment for order ${orderCode}`,
-            returnUrl: "",
-            cancelUrl: "",
+            returnUrl: "https://hopeful-tail-trust-fe.vercel.app/donation-successful",
+            cancelUrl: "https://hopeful-tail-trust-fe.vercel.app/",
         };
 
         const newFund = new Fund({

@@ -1,15 +1,19 @@
 const User = require('../models/User');
 
+
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const { password, ...updates } = req.body;
 
+
         const user = await User.findById(id);
+
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+
 
         if (user.role === 'admin' && user.firstLogin) {
             if (password) {
@@ -20,16 +24,18 @@ const updateUser = async (req, res) => {
             } else {
                 return res.status(400).json({ message: 'Password is required for first login' });
             }
-        } 
-        
+        }
+       
         if (password) {
             user.password = password;
             await user.save();
             return res.status(200).json({ message: 'Password updated successfully', data: user });
         }
 
+
         Object.assign(user, updates);
         const updatedUser = await user.save();
+
 
         res.status(200).json({ message: 'User updated successfully', data: updatedUser });
     } catch (error) {
@@ -37,9 +43,11 @@ const updateUser = async (req, res) => {
     }
 };
 
+
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
+
 
         const deletedUser = await User.findByIdAndDelete(id);
         if (!deletedUser) {
@@ -51,6 +59,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
+
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
@@ -59,6 +68,7 @@ const getAllUsers = async (req, res) => {
         res.status(500).json({ message: 'Failed to get users', error });
     }
 };
+
 
 const getUserById = async (req, res) => {
     try {
@@ -72,5 +82,6 @@ const getUserById = async (req, res) => {
         res.status(500).json({ message: 'Failed to get user', error });
     }
 };
+
 
 module.exports = { updateUser, deleteUser, getAllUsers, getUserById };
