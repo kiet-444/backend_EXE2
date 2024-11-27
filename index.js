@@ -9,11 +9,11 @@ const cors = require('cors');
 const multer = require('multer');
 const upload = multer();
 
-const http = require('http');
-const { Server } = require('socket.io');
+// const http = require('http');
+// const { Server } = require('socket.io');
 const path = require('path');
 
-const { setupSocket } = require('./socket');
+// const { setupSocket } = require('./socket');
 
 const CartRouter = require('./routes/cartRouter');
 const ProductRoute = require('./routes/productRouter');
@@ -37,11 +37,12 @@ const Fund = require('./models/Fund');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
-const server = http.createServer(app);
-const io = new Server(server);
+
+// const server = http.createServer(app);
+// const io = new Server(server);
 
 
-setupSocket(io);
+// setupSocket(io);
 
 
 const port = process.env.PORT || 3001;
@@ -128,6 +129,6 @@ app.use('/api', InvoiceRoute);
 // Connect to MongoDB
 connect();
 
-server.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server listening on port ${port}`,server.address().port);
 });
