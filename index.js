@@ -44,6 +44,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // setupSocket(io);
 
+// Connect to MongoDB
+connect();
 
 const port = process.env.PORT || 3001;
 const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
@@ -126,8 +128,7 @@ app.use('/api', InvoiceRoute);
 //     }
 // });
 
-// Connect to MongoDB
-connect();
+
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`,server.address().port);
