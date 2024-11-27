@@ -210,6 +210,21 @@ const getProductDetail = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
+        const media = await Media.findOne({ id: product.image_id });
+        if (media) {
+            product.image = {
+                id: media.id,
+                url: media.url
+            };
+        } else {
+            product.image = {
+                id: product.image_id,
+                url: null
+            };
+        }
+
+        delete product.image_id;
+        
         res.status(200).json({ product });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get product', error });
