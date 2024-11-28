@@ -176,6 +176,7 @@ router.delete('/delete/:id', PetController.deletePet);
  */
 router.get('/all', PetController.getAllPets);
 
+
 /**
  * @swagger
  * /api/pets/query:
