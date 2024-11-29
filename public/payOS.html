@@ -34,13 +34,13 @@
     <h1>PayOS Payment Test</h1>
     <p>Click the button below to initiate the payment process.</p>
     
-    <!-- Button to initiate payment -->
+
     <button class="button" onclick="initiatePayment()">Proceed to Payment</button>
 
     <div class="message" id="message"></div>
 
     <script>
-        // Function to fetch the checkout URL from the API and redirect to PayOS
+       
         async function initiatePayment() {
             try {
                 const response = await fetch('http://localhost:8080/api/test-payos', {
