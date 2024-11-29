@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Connect to MongoDB
 connect();
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const YOUR_DOMAIN = process.env.DOMAIN || 'http://localhost:3000';
 
 // Middleware setup
@@ -125,6 +125,6 @@ app.use('/api', InvoiceRoute);
 
 
 
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`,server.address().port);
+const server = app.listen(port, () => {
+  console.log(`Server listening on port ${port}`, server.address().port);
 });
