@@ -12,6 +12,7 @@ const addProduct = async (req, res) => {
         if (!mediaExits) {
             return res.status(404).json({ message: 'Media not found' });
         }
+        
 
         // Tạo sản phẩm mới
         const newProduct = new ProductItem({
@@ -92,6 +93,8 @@ const getProductByQuery = async (req, res) => {
         if (sort) {
             const [sortField, sortOrder] = sort.split(':');
             sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1; // Sắp xếp giảm hoặc tăng
+        } else {
+            sortOptions.createdAt = -1;
         }
 
         console.log("Check Q:",query);
@@ -210,22 +213,25 @@ const getProductDetail = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-        const media = await Media.findOne({ id: product.image_id });
+        const returnProduct = product.toObject();
+        const media = await Media.findOne({ id: returnProduct.image_id });
         if (media) {
-            product.image = {
+            returnProduct.image = {
                 id: media.id,
                 url: media.url
             };
         } else {
-            product.image = {
-                id: product.image_id,
+            returnProduct.image = {
+                id: returnProduct.image_id,
                 url: null
             };
         }
 
-        delete product.image_id;
+       
+
+        delete returnProduct.image_id;
         
-        res.status(200).json({ product });
+        res.status(200).json({ data:returnProduct, message: 'Product retrieved successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get product', error });
     }

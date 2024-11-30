@@ -12,7 +12,7 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
  *       required:
  *         - name
  *         - price
- *         - imageUrl
+ *         - image_id
  *       properties:
  *         id:
  *           type: string
@@ -29,7 +29,7 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
  *         oldPrice:
  *           type: number
  *           description: The old price of the product
- *         imageUrl:
+ *         image_id:
  *           type: string
  *           description: The image URL of the product
  *         rating:
@@ -49,7 +49,7 @@ const { verifyToken, isAdmin } = require('../middleWare/auth.middleware');
  *         description: A description of the sample product
  *         price: 29.99
  *         oldPrice: 39.99
- *         imageUrl: http://example.com/image.jpg
+ *         image_id: sample_image_id
  *         rating: 4.5
  *         category: Electronics
  *         stock: 10
