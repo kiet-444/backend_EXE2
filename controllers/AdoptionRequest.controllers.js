@@ -16,7 +16,7 @@ const createAdoptionRequest = async (req, res) =>  {
             return res.status(400).json({ message: 'Invalid cccd format' });
         }
 
-        const checkExistAdoptionRequest = await AdoptionRequest.findOne({ pet: petId, user: req.userId });
+        const checkExistAdoptionRequest = await AdoptionRequest.findOne({ pet: petId, user: req.userId, status: 'approved' });
         if (checkExistAdoptionRequest) {
             return res.status(400).json({ message: 'You already have an adoption request for this pet' });
         }
