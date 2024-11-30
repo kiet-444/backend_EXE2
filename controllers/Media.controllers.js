@@ -1,5 +1,7 @@
 const cloudinary = require('../config/cloudinary.config'); // Adjust the path if necessary
 const Media = require('../models/Media');
+const { PassThrough } = require('stream');
+
 
 const upload = async (req, res) => {
     try {
@@ -19,6 +21,7 @@ const upload = async (req, res) => {
                 if (error) {
                     return res.status(500).json({ error: error.message });
                 }
+                // console.log('check',result);
                 try {
                     const media = new Media({
                         id: result.public_id,
