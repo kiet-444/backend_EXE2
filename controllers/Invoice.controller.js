@@ -16,11 +16,12 @@ const payos = new PayOS(
 
 const addInvoice = async (req, res) => {
     try {
-        const { firstName, lastName, phoneNumber, street, ward, district, city, amount, shippingFee, totalAmount, cartItemId} = req.body;
-        const orderCode = Math.floor(Math.random() * 10000000);
+        const { firstName, lastName, phoneNumber, street, ward, district, city, amount, shippingFee, totalAmount, cartItemIds} = req.body;
+        console.log(req.body);
+        const orderCode = Math.floor(Math.random() * 1000000);
 
-        const  cartItem = await CartItem.findById(cartItemId);
-        if (!cartItem) {
+        const  cartItems = await CartItem.find({_id: { $in: cartItemIds }});
+        if (!cartItems.length === 0) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
 
@@ -45,15 +46,26 @@ const addInvoice = async (req, res) => {
             district,
             city,
             amount,
-            cartItem: cartItemId
+            cartItem: cartItemIds
         });
-        await newInvoice.save();
+        const savedInvoice = await newInvoice.save();
+
+        console.log("Order created:", order);
+
+        // in ra loi khi khong tao duoc link
 
         const paymentLink = await payos.createPaymentLink(order);
+
+        if (!paymentLink.checkoutUrl) {
+            return res.status(500).json({ message: 'Failed to create payment link' });
+        }
+
+        console.log("Payment link created:", paymentLink);
         res.json({ checkoutUrl: paymentLink.checkoutUrl });
 
     } catch (error) {
-        res.status(500).json({ message: 'Failed to add invoice', error });
+        console.error("PayOS Error:", error); 
+        res.status(500).json({ message: 'Failed to test PayOS', error: error.message || JSON.stringify(error) });
 
     }
 }
