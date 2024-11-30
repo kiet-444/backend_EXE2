@@ -277,7 +277,7 @@ router.get('/google',
  *                   description: JWT token for authentication
  */
 router.get(
-    'https://backend-exe-2.vercel.app/api/auth/google/callback',
+    '/google/callback',
     passport.authenticate('google', { session: false }),
     (req, res) => {
         const {  token } = req.user;

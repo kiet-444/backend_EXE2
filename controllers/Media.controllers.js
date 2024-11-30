@@ -54,7 +54,7 @@ const deleteMedia = async (req, res) => {
         const { id } = req.params;
 
         // Find the media in the database to get the Cloudinary public_id
-        const media = await Media.findOne({ id });
+        const media = await Media.findOne({ id }); // change (id) to ({id}) and use findOne instead of findById
         if (!media) {
             return res.status(404).json({ message: 'Media not found' });
         }
@@ -66,7 +66,7 @@ const deleteMedia = async (req, res) => {
             }
 
             // Only delete from the database if Cloudinary deletion succeeded
-            await Media.deleteOne({ id });
+            await Media.deleteOne({ id }); // change (id) to ({id}) and use deleteOne instead of deleteById
             res.status(200).json({ message: 'Media deleted successfully from database and Cloudinary' });
         });
     } catch (error) {

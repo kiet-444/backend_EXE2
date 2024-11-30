@@ -35,7 +35,7 @@ const invoiceSchema = new mongoose.Schema({
   totalAmount: {
     type: Number,
   },
-  cartItem: { type : mongoose.Schema.Types.ObjectId, ref: 'CartItem' },
+  cartItem: [{ type : mongoose.Schema.Types.ObjectId, ref: 'CartItem' }],
   status: {
     type: String,
     enum: ['Pending', 'Paid', 'Cancelled'],
