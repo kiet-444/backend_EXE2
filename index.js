@@ -81,6 +81,9 @@ app.post('/receive-hook', async (req, res) => {
         { status: 'Paid' },
         { new: true }
       );
+
+      await CartItem.deleteMany({ _id: { $in: cartItemIds } });
+      
     }
 
     const fund = await Fund.findOne({ orderCode: data.orderCode });

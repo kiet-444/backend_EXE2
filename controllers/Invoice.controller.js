@@ -18,7 +18,8 @@ const addInvoice = async (req, res) => {
     try {
         const { firstName, lastName, phoneNumber, street, ward, district, city, amount, shippingFee, totalAmount, cartItemIds} = req.body;
         console.log(req.body);
-        const orderCode = Math.floor(Math.random() * 1000000);
+        
+        const orderCode = Math.floor(Math.random() * 1000000);// tao ma don hang
 
         const  cartItems = await CartItem.find({_id: { $in: cartItemIds }});
         if (!cartItems.length === 0) {
@@ -51,6 +52,7 @@ const addInvoice = async (req, res) => {
         const savedInvoice = await newInvoice.save();
 
         console.log("Order created:", order);
+
 
         // in ra loi khi khong tao duoc link
 
@@ -96,12 +98,16 @@ const addInvoice = async (req, res) => {
 
 const getInvoices = async (req, res) => {
     try {
-        const invoices = await Invoice.find().populate('user', 'name');
+        const invoices = await Invoice.find().populate('userId', 'name');
+        if (!invoices) {
+            return res.status(404).json({ message: 'No invoices found' });
+        }
         res.status(200).json({ data: invoices });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to get invoices', error });
+        console.error(error);  // In ra thông báo lỗi
+        res.status(500).json({ message: 'Failed to get invoices', error: error.message });
     }
-}
+};
 
 module.exports = {
     addInvoice,
