@@ -109,8 +109,35 @@ const getInvoices = async (req, res) => {
     }
 };
 
+const getInvoiceByOrderCode = async (req, res) => {
+    try {
+        const { orderCode } = req.params;
+
+        // Tìm invoice theo orderCode và populate các trường liên quan
+        const invoice = await Invoice.findOne({ orderCode })
+            .populate('userId', 'name email') // Populate thông tin user
+            .populate('cartItem'); // Populate thông tin cartItem
+
+        if (!invoice) {
+            return res.status(404).json({ message: 'Invoice not found' });
+        }
+
+        res.status(200).json({
+            data: invoice,
+            message: 'Invoice retrieved successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to get invoice by order code', error: error.message });
+    }
+};
+
+
+
+
 module.exports = {
     addInvoice,
     getInvoices,
+    getInvoiceByOrderCode
     // testPayOS
 }
