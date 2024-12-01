@@ -130,11 +130,39 @@ router.post('/invoice', verifyToken, InvoiceController.addInvoice);
  *               items:
  *                 $ref: '#/components/schemas/Invoice'
  *       500:
- *         description: Internal server error
+ *         description: Internal server error   
  */
 
 // Get invoices
 router.get('/invoice', verifyToken, InvoiceController.getInvoices);
+
+/**
+ * @swagger
+ * /api/invoices/orderCode/{orderCode}:
+ *   get:
+ *     summary: Get an invoice by orderCode
+ *     tags: [Invoice]
+ *     parameters:
+ *       - in: path
+ *         name: orderCode
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The orderCode of the invoice
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the invoice
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Invoice'
+ *       404:
+ *         description: Invoice not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/invoices/orderCode/:orderCode', verifyToken,InvoiceController.getInvoiceByOrderCode);
+
 
 // router.post('/test-payos', InvoiceController.testPayOS);
 
