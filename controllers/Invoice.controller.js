@@ -98,32 +98,16 @@ const addInvoice = async (req, res) => {
 
 const getInvoices = async (req, res) => {
     try {
-        let invoices;
-
-        if (req.isAdmin) {
-            // Admin: Lấy tất cả hóa đơn của mọi user
-            invoices = await Invoice.find().populate('userId', 'name');
-        } else {
-            // User: Chỉ lấy hóa đơn của chính họ
-            invoices = await Invoice.find({ userId: req.userId }).populate('userId', 'name');
-        }
-
-        if (!invoices || invoices.length === 0) {
+        const invoices = await Invoice.find().populate('userId', 'name');
+        if (!invoices) {
             return res.status(404).json({ message: 'No invoices found' });
         }
-
-        res.status(200).json({
-            data: invoices,
-            message: req.isAdmin
-                ? 'All invoices retrieved successfully'
-                : 'Your invoices retrieved successfully',
-        });
+        res.status(200).json({ data: invoices });
     } catch (error) {
-        console.error(error);
+        console.error(error);  
         res.status(500).json({ message: 'Failed to get invoices', error: error.message });
     }
 };
-
 
 module.exports = {
     addInvoice,
