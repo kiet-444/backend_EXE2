@@ -104,7 +104,7 @@ const getInvoices = async (req, res) => {
         }
         res.status(200).json({ data: invoices });
     } catch (error) {
-        console.error(error);  // In ra thông báo lỗi
+        console.error(error);  
         res.status(500).json({ message: 'Failed to get invoices', error: error.message });
     }
 };

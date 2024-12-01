@@ -38,14 +38,34 @@ const addFund = async (req, res) => {
 
 const getFunds = async (req, res) => {
     try {
-        const funds = await Fund.find().populate('user', 'name');
-        const totalAmount = funds.reduce((acc, fund) => acc + (fund.amount || 0), 0);
-        res.status(200).json({ data: {funds, totalAmount}, message: 'Funds retrieved successfully' });
+        
+        const isAdmin = req.isAdmin; // Middleware cần cung cấp `req.isAdmin`
+
+        let funds;
+        let totalAmount = 0;
+
+        if (isAdmin) {
+            // Admin có thể xem tất cả các quỹ
+            funds = await Fund.find().populate('user', 'name');
+            totalAmount = funds.reduce((acc, fund) => acc + (fund.amount || 0), 0);
+        } else {
+            // Người dùng thường chỉ xem các quỹ của họ
+            funds = await Fund.find({ user: req.userId }).populate('user', 'name');
+            totalAmount = funds.reduce((acc, fund) => acc + (fund.amount || 0), 0);
+        }
+
+        res.status(200).json({
+            data: { funds, totalAmount },
+            message: isAdmin
+                ? 'All funds retrieved successfully'
+                : 'Your funds retrieved successfully',
+        });
     } catch (error) {
         res.status(500).json({ message: 'Failed to get funds', error });
     }
-}
+};
+
 
 module.exports = {
-    addFund, getFunds
+    addFund, getFunds 
 }

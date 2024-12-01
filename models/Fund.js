@@ -6,6 +6,7 @@ const FundSchema = new mongoose.Schema({
     amount: { type: Number },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     orderCode: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
 const Fund = mongoose.model('Fund', FundSchema);
